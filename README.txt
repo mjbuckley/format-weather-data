@@ -1,16 +1,21 @@
-An example of the current JSON structure that is built by runnning createjson.js
-is below.  Values in the example are for illustration purposes only.
+Current example of one complete station entry
 
-
-stationObj = {
-  "USC00024453": {
-    "location": {
-      "zip": "43221",
-      "city": "Columbus"
-    },
-    "snow": {
-      "anninchplus": "20.2",
-      "anninchplusflag": "P"
-    }
+"RQC00666270": {
+  "location": {
+    "zip": "00674",
+    "city": "Manati"
+  },
+  "snow": {
+    "annInchPlus": "0.0",
+    "annInchPlusFlag": "P",
+    "annGndInchPlus": "0.0",
+    "annGndInchPlusFlag": "P"
+  },
+  "precip": {
+    "annprcpge050hi": "37.8",
+    "annprcpge050hiFlag": "P"
   }
-};
+  "temp": {
+    "mlyTMaxAvg": ["1", "2"... "12"] // where 1-12 are values for each month
+  }
+}
