@@ -177,7 +177,7 @@ for(let obj in stationObj) {
 // .json file instead of a .js file?
 const stationObjJson= JSON.stringify(stationObj);
 
-fs.writeFile('weather.js', stationObjJson, function(err) {
+fs.writeFile('weather.json', stationObjJson, function(err) {
   if (err) {
     return console.error(err);
   };
