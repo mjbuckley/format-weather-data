@@ -19,3 +19,5 @@ Current example of one complete station entry
     "mlyTMaxAvg": ["1", "2"... "12"] // where 1-12 are values for each month
   }
 }
+
+stationObj = { station1: {nested info}, station2: {nested info}, etc.}
