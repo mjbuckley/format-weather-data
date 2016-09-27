@@ -136,13 +136,41 @@ for (let i of mlyTMaxInfo) {
   const station = i[0];
   const tempArray = i[1];
   const tempObj = {
-    "mlyTMaxAvg":tempArray
+    "mlyTMaxAvg": tempArray
   };
   if (stationObj[station]) {
     stationObj[station]["temp"] = tempObj;
   } else {
     stationObj[station] = {
       "temp": tempObj
+    };
+  };
+};
+
+
+// Create a formatted array of monthly average max temperature
+const mlyTMinData = fs.readFileSync('data/mly-tmin-normal.txt', 'utf8');
+let mlyTMinInfo = formatNoaaData(mlyTMinData);
+mlyTMinInfo = separateFlags13C(mlyTMinInfo);
+mlyTMinInfo = fixSpecialValues13C(mlyTMinInfo);
+mlyTMinInfo = fixDecimal13C(mlyTMinInfo);
+
+// Add monthly tminaverages to stationObj.
+for (let i of mlyTMinInfo) {
+  const station = i[0];
+  const tempArray = i[1];
+
+  if (stationObj[station]["temp"]) {
+    stationObj[station]["temp"]["mlyTMinInfo"] = tempArray;
+  } else if (stationObj[station]) {
+    stationObj[station]["temp"] = {
+      "mlyTMinInfo": tempArray
+    };
+  } else {
+    stationObj[station] = {
+      "temp": {
+        "mlyTMinInfo": tempArray
+      }
     };
   };
 };

@@ -21,3 +21,11 @@ Current example of one complete station entry
 }
 
 stationObj = { station1: {nested info}, station2: {nested info}, etc.}
+
+
+mlyTminAvg
+mlyTmaxH (highest value of of the 12 months, need to compute)
+mlyTmaxL (lowest value of the 12 months, need to compute)
+
+number of days that drop below freezing
+number of days that get above 90
