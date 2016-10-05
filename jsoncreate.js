@@ -176,6 +176,39 @@ for (let i of mlyTMinInfo) {
 };
 
 
+// Create formatted array of average numnber of days where the temp drops below
+// freezing at some point.
+const below32Data = fs.readFileSync('data/ann-tmin-avgnds-lsth032.txt', 'utf8');
+let below32Info = formatNoaaData(below32Data);
+below32Info = separateFlags2C(below32Info);
+below32Info = fixSpecialValues(below32Info);
+below32Info = fixDecimal(below32Info);
+
+// Add below32Info data to stationObj.
+for (let i of below32Info) {
+  const station = i[0];
+  const below32 = i[1];
+  const flag = i[2];
+  const below32Obj = {
+    "daysBelow32": below32,
+    "daysBelow32Flag": flag
+  };
+
+  if (stationObj[station]["temp"]) {
+    stationObj[station]["temp"]["daysBelow32"] = below32;
+    stationObj[station]["temp"]["daysBelow32Flag"] = flag;
+  } else if (stationObj[station]) {
+    stationObj[station]["temp"] = below32Obj;
+  } else {
+    stationObj[station] = {
+      "temp": below32Obj
+    };
+  };
+};
+
+
+// NOTE: I HAVE MORE TO ADD BELOW.  HOWEVER, I'm not sure about the path I'm
+// on, so I'm waiting on that.
 // Remove all stations with incomplete information, and remove all flag info.
 // I'm removing because I don't want that data right now, but I added it in the
 // first place because I could see wanting it in the future. NOTE: checking if
@@ -188,12 +221,17 @@ for(let obj in stationObj) {
       stationObj[obj]["snow"]["annInchPlus"] === undefined ||
       stationObj[obj]["snow"]["annGndInchPlus"] === undefined ||
       stationObj[obj]["precip"] === undefined ||
-      stationObj[obj]["temp"] === undefined ) {
+      stationObj[obj]["precip"]["annprcpge050hi"] === undefined ||
+      stationObj[obj]["temp"] === undefined ||
+      stationObj[obj]["temp"]["mlyTMaxAvg"] === undefined ||
+      stationObj[obj]["temp"]["mlyTMinInfo"] === undefined ||
+      stationObj[obj]["temp"]["daysBelow32"] === undefined ) {
         delete stationObj[obj];
   } else {
     delete stationObj[obj]["snow"]["annInchPlusFlag"];
     delete stationObj[obj]["snow"]["annGndInchPlusFlag"];
     delete stationObj[obj]["precip"]["annprcpge050hiFlag"];
+    delete stationObj[obj]["temp"]["daysBelow32Flag"];
   }
 };
 
@@ -203,7 +241,7 @@ for(let obj in stationObj) {
 // Turn stationObj into JSON and output file. NOTE: this is a pretty large
 // file. I should look at ways to make this smaller. ALSO: Should I make this a
 // .json file instead of a .js file?
-const stationObjJson= JSON.stringify(stationObj);
+const stationObjJson = JSON.stringify(stationObj);
 
 fs.writeFile('weather.json', stationObjJson, function(err) {
   if (err) {
