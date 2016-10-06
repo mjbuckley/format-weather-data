@@ -1,32 +1,33 @@
-// Run this file from the command line to create weather.js, a file containing
-// all of the JSON formatted NOAA data that will be used on the weather site.
-// If weather.js already exists, it will be overwritten.
+// Run this file from the command line to create weather.json, a file containing
+// all of the JSON formatted NOAA data that will be used on the city-weather-app
+// site. If weather.json already exists, it will be overwritten.
 
-// TODO: Can make stationObj smaller by (1) making key names shorter, (2)
+
+// NOTES:
+// -For now I am ommiting the flags from weather.json because I'm not using
+// them in the app. I can always add in the future.
+// -Todo: Make stationObj smaller by (1) making key names shorter, (2)
 // removing stations not in the 50 states, and (3) perhaps not having things
 // nested so much (like "precip", "snow", and "location" keys).
-// Also, there is nothing incorrect about how I'm creating stationObj, but as
-// it gets larger it has the potential to get confusing to follow. Look at ways
-// to move chunks into separate functions, and consider creating the full obj
-// right away (but with '' as values). Then I don't need to keep checking for
-// stuff to exist. Perhaps something like a class where I can just call
-// newStation() and have an object with all keys alrady pressent?
+// -Todo: Output another file that contains the constants I need for the range
+// slider inputs (min, max, etc.).
 
 
 const fs = require('fs');
 const createZipObj = require('./lib/createzipobj.js');
 const fixDecimal = require('./lib/fixdecimal.js');
+const fixDecimal13C = require('./lib/fixDecimal13c.js');
 const fixSpecialValues = require('./lib/fixspecialvalues.js');
+const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
 const formatNoaaData = require('./lib/formatnoaadata.js');
 const separateFlags2C = require('./lib/separateflags2c.js');
 const separateFlags13C = require('./lib/separateflags13c.js');
-const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
-const fixDecimal13C = require('./lib/fixDecimal13c.js');
 
 
-// Build initial structure of stationObj from NOAA's list of all station
-// IDs and thier corresponding zipcodes and city names. Station IDs will be the
-// keys of stationObj, and the corresponding info will be stored as the value.
+// Create stationObj and build its initial structure. Built from NOAA's list of
+// all station IDs and thier corresponding zipcodes and city names. Station IDs
+// will be the keys of stationObj, and the corresponding info will be stored as
+// the value.
 const stationData = fs.readFileSync('data/zipcodes-normals-stations.txt', 'utf8');
 let stationObj = formatNoaaData(stationData);
 stationObj = createZipObj(stationObj);
@@ -34,30 +35,19 @@ stationObj = createZipObj(stationObj);
 
 // Create formatted array of average numnber of days with at least an inch of
 // snow.
-const snowData = fs.readFileSync('data/ann-snow-avgnds-ge010ti.txt', 'utf8');
-let snowInfo = formatNoaaData(snowData);
+const rawSnowData = fs.readFileSync('data/ann-snow-avgnds-ge010ti.txt', 'utf8');
+let snowInfo = formatNoaaData(rawSnowData);
 snowInfo = separateFlags2C(snowInfo);
 snowInfo = fixSpecialValues(snowInfo);
 snowInfo = fixDecimal(snowInfo);
 
-// Add snowInfo data to stationObj.  NOTE: There are a few stations in
-// the snow data set not pressent in the zipcode dataset.  I'll add the
-// stations and info, but will check for incomplete data at a later point.
+// Add snowInfo data to stationObj.
 for (let i of snowInfo) {
   const station = i[0];
   const snowfall = i[1];
-  const flag = i[2];
-  const snowObj = {
-    "annInchPlus": snowfall,
-    "annInchPlusFlag": flag
-  };
   if (stationObj[station]) {
-    stationObj[station]["snow"] = snowObj;
-  } else {
-    stationObj[station] = {
-      snow: snowObj
-    };
-  };
+    stationObj[station]["snow"]["annInchPlus"] = snowfall;
+  }
 };
 
 
@@ -69,30 +59,13 @@ snowGndInfo = separateFlags2C(snowGndInfo);
 snowGndInfo = fixSpecialValues(snowGndInfo);
 snowGndInfo = fixDecimal(snowGndInfo);
 
-// Add snow ground cover info to stationObj. Add station if not already pressent
-// in stationObj.
+// Add snow ground cover info to stationObj.
 for (let i of snowGndInfo) {
   const station = i[0];
   const snowdays = i[1];
-  const flag = i[2];
-  const snowGndObj = {
-    "annGndInchPlus": snowdays,
-    "annGndInchPlusFlag": flag
-  };
-  if (stationObj[station]["snow"]) {
+  if (stationObj[station]) {
     stationObj[station]["snow"]["annGndInchPlus"] = snowdays;
-    stationObj[station]["snow"]["annGndInchPlusFlag"] = flag;
-  } else {
-    // station exists but not previous snow info
-    if (stationObj[station]) {
-      stationObj[station]["snow"] = snowGndObj;
-    // neither station nor snow info exist
-    } else {
-      stationObj[station] = {
-        "snow": snowGndObj
-      };
-    };
-  };
+  }
 };
 
 
@@ -104,23 +77,13 @@ annRainInfo = separateFlags2C(annRainInfo);
 annRainInfo = fixSpecialValues(annRainInfo);
 annRainInfo = fixDecimal(annRainInfo);
 
-// Add precip info to stationObj. Add station to stationObj if not already
-// pressent.
+// Add precip info to stationObj.
 for (let i of annRainInfo) {
   const station = i[0];
   const rainDays = i[1];
-  const flag = i[2];
-  const rainDaysObj = {
-    "annprcpge050hi": rainDays,
-    "annprcpge050hiFlag": flag
-  };
   if (stationObj[station]) {
-    stationObj[station]["precip"] = rainDaysObj;
-  } else {
-    stationObj[station] = {
-      "precip": rainDaysObj
-    };
-  };
+    stationObj[station]["precip"]["annprcpge050hi"] = rainDays;
+  }
 };
 
 
@@ -135,16 +98,9 @@ mlyTMaxInfo = fixDecimal13C(mlyTMaxInfo);
 for (let i of mlyTMaxInfo) {
   const station = i[0];
   const tempArray = i[1];
-  const tempObj = {
-    "mlyTMaxAvg": tempArray
-  };
   if (stationObj[station]) {
-    stationObj[station]["temp"] = tempObj;
-  } else {
-    stationObj[station] = {
-      "temp": tempObj
-    };
-  };
+    stationObj[station]["temp"]["mlyTMaxAvg"] = tempArray;
+  }
 };
 
 
@@ -159,20 +115,9 @@ mlyTMinInfo = fixDecimal13C(mlyTMinInfo);
 for (let i of mlyTMinInfo) {
   const station = i[0];
   const tempArray = i[1];
-
-  if (stationObj[station]["temp"]) {
+  if (stationObj[station]) {
     stationObj[station]["temp"]["mlyTMinInfo"] = tempArray;
-  } else if (stationObj[station]) {
-    stationObj[station]["temp"] = {
-      "mlyTMinInfo": tempArray
-    };
-  } else {
-    stationObj[station] = {
-      "temp": {
-        "mlyTMinInfo": tempArray
-      }
-    };
-  };
+  }
 };
 
 
@@ -188,59 +133,29 @@ below32Info = fixDecimal(below32Info);
 for (let i of below32Info) {
   const station = i[0];
   const below32 = i[1];
-  const flag = i[2];
-  const below32Obj = {
-    "daysBelow32": below32,
-    "daysBelow32Flag": flag
-  };
-
-  if (stationObj[station]["temp"]) {
+  if (stationObj[station]) {
     stationObj[station]["temp"]["daysBelow32"] = below32;
-    stationObj[station]["temp"]["daysBelow32Flag"] = flag;
-  } else if (stationObj[station]) {
-    stationObj[station]["temp"] = below32Obj;
-  } else {
-    stationObj[station] = {
-      "temp": below32Obj
-    };
-  };
+  }
 };
 
 
-// NOTE: I HAVE MORE TO ADD BELOW.  HOWEVER, I'm not sure about the path I'm
-// on, so I'm waiting on that.
-// Remove all stations with incomplete information, and remove all flag info.
-// I'm removing because I don't want that data right now, but I added it in the
-// first place because I could see wanting it in the future. NOTE: checking if
-// a key valye is undefined is bad in general (because a key could have been
-// given a value of undefined but still exist), but since I created the object
-// myself I feel ok to use here. Could have used key in obj or hasOwnProperty.
+
+// Remove all stations with incomplete information.
 for(let obj in stationObj) {
-  if( stationObj[obj]["location"] === undefined ||
-      stationObj[obj]["snow"] === undefined ||
-      stationObj[obj]["snow"]["annInchPlus"] === undefined ||
-      stationObj[obj]["snow"]["annGndInchPlus"] === undefined ||
-      stationObj[obj]["precip"] === undefined ||
-      stationObj[obj]["precip"]["annprcpge050hi"] === undefined ||
-      stationObj[obj]["temp"] === undefined ||
-      stationObj[obj]["temp"]["mlyTMaxAvg"] === undefined ||
-      stationObj[obj]["temp"]["mlyTMinInfo"] === undefined ||
-      stationObj[obj]["temp"]["daysBelow32"] === undefined ) {
+  if( stationObj[obj]["snow"]["annInchPlus"] === "" ||
+      stationObj[obj]["snow"]["annGndInchPlus"] === "" ||
+      stationObj[obj]["precip"]["annprcpge050hi"] === "" ||
+      stationObj[obj]["temp"]["mlyTMaxAvg"].length === 0 ||
+      stationObj[obj]["temp"]["mlyTMinInfo"].length === 0 ||
+      stationObj[obj]["temp"]["daysBelow32"] === "" ) {
         delete stationObj[obj];
-  } else {
-    delete stationObj[obj]["snow"]["annInchPlusFlag"];
-    delete stationObj[obj]["snow"]["annGndInchPlusFlag"];
-    delete stationObj[obj]["precip"]["annprcpge050hiFlag"];
-    delete stationObj[obj]["temp"]["daysBelow32Flag"];
   }
 };
 
 
 // OUTPUT INFORMATION:
 
-// Turn stationObj into JSON and output file. NOTE: this is a pretty large
-// file. I should look at ways to make this smaller. ALSO: Should I make this a
-// .json file instead of a .js file?
+// Turn stationObj into JSON and output file.
 const stationObjJson = JSON.stringify(stationObj);
 
 fs.writeFile('weather.json', stationObjJson, function(err) {
@@ -250,4 +165,4 @@ fs.writeFile('weather.json', stationObjJson, function(err) {
 });
 
 // Output number of stations in modified stationObj
-console.log(Object.keys(stationObj).length);
+console.log(Object.keys(stationObj).length + " complete stations.");
