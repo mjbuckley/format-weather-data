@@ -6,7 +6,7 @@
 // NOTES:
 // -For now I am ommiting the flags from weather.json because I'm not using
 // them in the app. I can always add in the future.
-// -Todo: Make stationObj smaller by (1) making key names shorter, (2)
+// -Todo: Make stationsObj smaller by (1) making key names shorter, (2)
 // removing stations not in the 50 states, and (3) perhaps not having things
 // nested so much (like "precip", "snow", and "location" keys).
 // -Todo: Output another file that contains the constants I need for the range
@@ -14,7 +14,7 @@
 
 
 const fs = require('fs');
-const createZipObj = require('./lib/createzipobj.js');
+const createStationsObj = require('./lib/createstationsobj.js');
 const fixDecimal = require('./lib/fixdecimal.js');
 const fixDecimal13C = require('./lib/fixDecimal13c.js');
 const fixSpecialValues = require('./lib/fixspecialvalues.js');
@@ -24,13 +24,13 @@ const separateFlags2C = require('./lib/separateflags2c.js');
 const separateFlags13C = require('./lib/separateflags13c.js');
 
 
-// Create stationObj and build its initial structure. Built from NOAA's list of
+// Create stationsObj and build its initial structure. Built from NOAA's list of
 // all station IDs and thier corresponding zipcodes and city names. Station IDs
-// will be the keys of stationObj, and the corresponding info will be stored as
+// will be the keys of stationsObj, and the corresponding info will be stored as
 // the value.
 const stationData = fs.readFileSync('data/zipcodes-normals-stations.txt', 'utf8');
-let stationObj = formatNoaaData(stationData);
-stationObj = createZipObj(stationObj);
+let stationsObj = formatNoaaData(stationData);
+stationsObj = createStationsObj(stationsObj);
 
 
 // Create formatted array of average numnber of days with at least an inch of
@@ -41,12 +41,12 @@ snowInfo = separateFlags2C(snowInfo);
 snowInfo = fixSpecialValues(snowInfo);
 snowInfo = fixDecimal(snowInfo);
 
-// Add snowInfo data to stationObj.
+// Add snowInfo data to stationsObj.
 for (let i of snowInfo) {
   const station = i[0];
   const snowfall = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["snow"]["annInchPlus"] = snowfall;
+  if (stationsObj[station]) {
+    stationsObj[station]["snow"]["annInchPlus"] = snowfall;
   }
 };
 
@@ -59,12 +59,12 @@ snowGndInfo = separateFlags2C(snowGndInfo);
 snowGndInfo = fixSpecialValues(snowGndInfo);
 snowGndInfo = fixDecimal(snowGndInfo);
 
-// Add snow ground cover info to stationObj.
+// Add snow ground cover info to stationsObj.
 for (let i of snowGndInfo) {
   const station = i[0];
   const snowdays = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["snow"]["annGndInchPlus"] = snowdays;
+  if (stationsObj[station]) {
+    stationsObj[station]["snow"]["annGndInchPlus"] = snowdays;
   }
 };
 
@@ -77,12 +77,12 @@ annRainInfo = separateFlags2C(annRainInfo);
 annRainInfo = fixSpecialValues(annRainInfo);
 annRainInfo = fixDecimal(annRainInfo);
 
-// Add precip info to stationObj.
+// Add precip info to stationsObj.
 for (let i of annRainInfo) {
   const station = i[0];
   const rainDays = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["precip"]["annprcpge050hi"] = rainDays;
+  if (stationsObj[station]) {
+    stationsObj[station]["precip"]["annprcpge050hi"] = rainDays;
   }
 };
 
@@ -94,12 +94,12 @@ mlyTMaxInfo = separateFlags13C(mlyTMaxInfo);
 mlyTMaxInfo = fixSpecialValues13C(mlyTMaxInfo);
 mlyTMaxInfo = fixDecimal13C(mlyTMaxInfo);
 
-// Add monthly tmax averages to stationObj.
+// Add monthly tmax averages to stationsObj.
 for (let i of mlyTMaxInfo) {
   const station = i[0];
   const tempArray = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["temp"]["mlyTMaxAvg"] = tempArray;
+  if (stationsObj[station]) {
+    stationsObj[station]["temp"]["mlyTMaxAvg"] = tempArray;
   }
 };
 
@@ -111,12 +111,12 @@ mlyTMinInfo = separateFlags13C(mlyTMinInfo);
 mlyTMinInfo = fixSpecialValues13C(mlyTMinInfo);
 mlyTMinInfo = fixDecimal13C(mlyTMinInfo);
 
-// Add monthly tminaverages to stationObj.
+// Add monthly tminaverages to stationsObj.
 for (let i of mlyTMinInfo) {
   const station = i[0];
   const tempArray = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["temp"]["mlyTMinInfo"] = tempArray;
+  if (stationsObj[station]) {
+    stationsObj[station]["temp"]["mlyTMinInfo"] = tempArray;
   }
 };
 
@@ -129,40 +129,40 @@ below32Info = separateFlags2C(below32Info);
 below32Info = fixSpecialValues(below32Info);
 below32Info = fixDecimal(below32Info);
 
-// Add below32Info data to stationObj.
+// Add below32Info data to stationsObj.
 for (let i of below32Info) {
   const station = i[0];
   const below32 = i[1];
-  if (stationObj[station]) {
-    stationObj[station]["temp"]["daysBelow32"] = below32;
+  if (stationsObj[station]) {
+    stationsObj[station]["temp"]["daysBelow32"] = below32;
   }
 };
 
 
 
 // Remove all stations with incomplete information.
-for(let obj in stationObj) {
-  if( stationObj[obj]["snow"]["annInchPlus"] === "" ||
-      stationObj[obj]["snow"]["annGndInchPlus"] === "" ||
-      stationObj[obj]["precip"]["annprcpge050hi"] === "" ||
-      stationObj[obj]["temp"]["mlyTMaxAvg"].length === 0 ||
-      stationObj[obj]["temp"]["mlyTMinInfo"].length === 0 ||
-      stationObj[obj]["temp"]["daysBelow32"] === "" ) {
-        delete stationObj[obj];
+for(let obj in stationsObj) {
+  if( stationsObj[obj]["snow"]["annInchPlus"] === "" ||
+      stationsObj[obj]["snow"]["annGndInchPlus"] === "" ||
+      stationsObj[obj]["precip"]["annprcpge050hi"] === "" ||
+      stationsObj[obj]["temp"]["mlyTMaxAvg"].length === 0 ||
+      stationsObj[obj]["temp"]["mlyTMinInfo"].length === 0 ||
+      stationsObj[obj]["temp"]["daysBelow32"] === "" ) {
+        delete stationsObj[obj];
   }
 };
 
 
 // OUTPUT INFORMATION:
 
-// Turn stationObj into JSON and output file.
-const stationObjJson = JSON.stringify(stationObj);
+// Turn stationsObj into JSON and output file.
+const stationsObjJson = JSON.stringify(stationsObj);
 
-fs.writeFile('weather.json', stationObjJson, function(err) {
+fs.writeFile('weather.json', stationsObjJson, function(err) {
   if (err) {
     return console.error(err);
   };
 });
 
-// Output number of stations in modified stationObj
-console.log(Object.keys(stationObj).length + " complete stations.");
+// Output number of stations in modified stationsObj
+console.log(Object.keys(stationsObj).length + " complete stations.");
