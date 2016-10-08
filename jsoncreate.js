@@ -4,13 +4,14 @@
 
 
 // NOTES:
+// -NEED TO DECIDE how to output minMaxArray. I want to use it to automatically
+// set the min and max values for the range sliders. It looks like the way I have
+// the array built works, I just need to output and use.
 // -For now I am ommiting the flags from weather.json because I'm not using
 // them in the app. I can always add in the future.
 // -Todo: Make stationsObj smaller by (1) making key names shorter, (2)
 // removing stations not in the 50 states, and (3) perhaps not having things
 // nested so much (like "precip", "snow", and "location" keys).
-// -Todo: Output another file that contains the constants I need for the range
-// slider inputs (min, max, etc.).
 
 
 const fs = require('fs');
@@ -22,6 +23,7 @@ const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
 const formatNoaaData = require('./lib/formatnoaadata.js');
 const separateFlags2C = require('./lib/separateflags2c.js');
 const separateFlags13C = require('./lib/separateflags13c.js');
+const addMaxMin = require('./lib/addmaxmin.js');
 
 
 // Create stationsObj and build its initial structure. Built from NOAA's list of
@@ -93,6 +95,7 @@ let mlyTMaxInfo = formatNoaaData(mlyTMaxData);
 mlyTMaxInfo = separateFlags13C(mlyTMaxInfo);
 mlyTMaxInfo = fixSpecialValues13C(mlyTMaxInfo);
 mlyTMaxInfo = fixDecimal13C(mlyTMaxInfo);
+mlyTMaxInfo = addMaxMin(mlyTMaxInfo, "max");
 
 // Add monthly tmax averages to stationsObj.
 for (let i of mlyTMaxInfo) {
@@ -110,6 +113,7 @@ let mlyTMinInfo = formatNoaaData(mlyTMinData);
 mlyTMinInfo = separateFlags13C(mlyTMinInfo);
 mlyTMinInfo = fixSpecialValues13C(mlyTMinInfo);
 mlyTMinInfo = fixDecimal13C(mlyTMinInfo);
+mlyTMinInfo = addMaxMin(mlyTMinInfo, "min");
 
 // Add monthly tminaverages to stationsObj.
 for (let i of mlyTMinInfo) {
@@ -153,6 +157,43 @@ for(let obj in stationsObj) {
 };
 
 
+// Compute min and max values for use with input range slider. This works except
+// for the monthly values, which I still need to work on. Also, decide how I want
+// to round.
+let valuesArray = {
+  "annInchPlus": [],
+  "annGndInchPlus": [],
+  "annprcpge050hi": [],
+  "mlyTMaxAvg": [],
+  "mlyTMinInfo": [],
+  "daysBelow32": []
+};
+
+for(let obj in stationsObj) {
+  valuesArray["annInchPlus"].push(stationsObj[obj]["snow"]["annInchPlus"]);
+  valuesArray["annGndInchPlus"].push(stationsObj[obj]["snow"]["annGndInchPlus"]);
+  valuesArray["annprcpge050hi"].push(stationsObj[obj]["precip"]["annprcpge050hi"]);
+  valuesArray["mlyTMaxAvg"].push(stationsObj[obj]["temp"]["mlyTMaxAvg"][12]);
+  valuesArray["mlyTMinInfo"].push(stationsObj[obj]["temp"]["mlyTMinInfo"][12]);
+  valuesArray["daysBelow32"].push(stationsObj[obj]["temp"]["daysBelow32"]);
+};
+
+let minMaxArray = {
+  "annInchPlus": [],
+  "annGndInchPlus": [],
+  "annprcpge050hi": [],
+  "mlyTMaxAvg": [],
+  "mlyTMinInfo": [],
+  "daysBelow32": []
+};
+
+for (let obj in valuesArray) {
+  let allValuesArray = valuesArray[obj];
+  minMaxArray[obj].push(Math.min(...allValuesArray));
+  minMaxArray[obj].push(Math.max(...allValuesArray));
+};
+
+
 // OUTPUT INFORMATION:
 
 // Turn stationsObj into JSON and output file.
@@ -165,4 +206,5 @@ fs.writeFile('weather.json', stationsObjJson, function(err) {
 });
 
 // Output number of stations in modified stationsObj
-console.log(Object.keys(stationsObj).length + " complete stations.");
+console.log(Object.keys(stationsObj).length + " stations.");
+console.log(minMaxArray);
