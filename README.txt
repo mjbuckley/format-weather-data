@@ -42,3 +42,23 @@ Actual station example:
     "daysBelow32": "0.0"
   }
 }
+
+
+minMaxArray:
+
+{
+  "annInchPlus": [0,92.4],
+  "annGndInchPlus":[0,246.4],
+  "annprcpge050hi":[0.3,134.8],
+  "mlyTMaxAvg":[46.9,116.5],
+  "mlyTMinInfo":[-26.4,72.3],
+  "daysBelow32":[0,307.5]
+}
+{
+  "annInchPlus":[0,93],
+  "annGndInchPlus":[0,247],
+  "annprcpge050hi":[0,135],
+  "mlyTMaxAvg":[46,117],
+  "mlyTMinInfo":[-27,73],
+  "daysBelow32":[0,308]
+}

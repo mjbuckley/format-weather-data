@@ -4,14 +4,13 @@
 
 
 // NOTES:
-// -NEED TO DECIDE how to output minMaxArray. I want to use it to automatically
-// set the min and max values for the range sliders. It looks like the way I have
-// the array built works, I just need to output and use.
 // -For now I am ommiting the flags from weather.json because I'm not using
 // them in the app. I can always add in the future.
 // -Todo: Make stationsObj smaller by (1) making key names shorter, (2)
 // removing stations not in the 50 states, and (3) perhaps not having things
 // nested so much (like "precip", "snow", and "location" keys).
+// Improve naming and documentation. Some names are very confusing (ex: called
+// ..Array when they are objects, etc.).
 
 
 const fs = require('fs');
@@ -157,9 +156,7 @@ for(let obj in stationsObj) {
 };
 
 
-// Compute min and max values for use with input range slider. This works except
-// for the monthly values, which I still need to work on. Also, decide how I want
-// to round.
+// Compute min and max values for use with input range slider.
 let valuesArray = {
   "annInchPlus": [],
   "annGndInchPlus": [],
@@ -193,6 +190,12 @@ for (let obj in valuesArray) {
   minMaxArray[obj].push(Math.max(...allValuesArray));
 };
 
+// Round min values down and max values up.
+for (let arr in minMaxArray) {
+  minMaxArray[arr][0] = Math.floor(minMaxArray[arr][0]);
+  minMaxArray[arr][1] = Math.ceil(minMaxArray[arr][1]);
+};
+
 
 // OUTPUT INFORMATION:
 
@@ -205,6 +208,14 @@ fs.writeFile('weather.json', stationsObjJson, function(err) {
   };
 });
 
+// Turn minMaxArray into JSON and output file.
+const minMaxArrayJson = JSON.stringify(minMaxArray);
+
+fs.writeFile('minmax.json', minMaxArrayJson, function(err) {
+  if (err) {
+    return console.error(err);
+  };
+});
+
 // Output number of stations in modified stationsObj
 console.log(Object.keys(stationsObj).length + " stations.");
-console.log(minMaxArray);
