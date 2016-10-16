@@ -51,16 +51,12 @@ console.log(problems);
 // resolved.
 
 
-// NOTE: This works but there are two problems: (1) There is an undefine value at the
-// end (probably caused by line return or blank space), and (2) the key at the top of the
-// data is also included in the array. FIX (although for how I will be using it's not really
-// a problem).
 // Create stateNumbersObj, which contains key-value pairs mapping the state number
 // in the zcta data to the actual state names: { 1: "Alabama", etc. }. Note, the
 // numbers are not 1-50 but 1-78 with some gaps.
 const stateNumersData = fs.readFileSync('data/state-numbers.txt', 'utf8');
-stateNumbersObj = {};
 let stateNumbersArray = formatStateNumbers(stateNumersData);
+let stateNumbersObj = {};
 
 for (let i = 0; i < stateNumbersArray.length; i++) {
   let stateNum = stateNumbersArray[i][0];
