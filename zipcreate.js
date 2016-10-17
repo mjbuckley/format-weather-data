@@ -2,6 +2,9 @@ const fs = require('fs');
 const formatZctaData = require('./lib/formatzctadata.js');
 const formatStateNumbers = require('./lib/formatstatenumbers.js');
 
+// const stationsObj = fs.readFileSync('weather.json', 'utf8');
+const stationsObj = require('./weather.json');
+
 const zipData = fs.readFileSync('data/zcta_place_rel_10.txt', 'utf8');
 let zipArray = formatZctaData(zipData);
 
@@ -44,7 +47,26 @@ for (let arr of zipArray) {
   }
 };
 
-console.log(problems);
+
+// problems (and the problemZips array below) are a list of zips that fall in two
+// states. But there may be no stations that actually have those zips. The below
+// code checks if any stations have a problem zip and then adds them to the
+// problemStations object (as of 10/16/16, none of the stations I'm using have a
+// problem zip, although I believe some stations do have problem zips, I just happen
+// not to be using them based on the specific weather info I'm using).
+
+let problemZips = Object.keys(problems);
+console.log(problemZips);
+let problemStations = {};
+
+// List of all stations that need to be manually assigned a zip
+for (let obj in stationsObj) {
+  let stationZip = stationsObj[obj]["location"]["zip"];
+  if (problemZips.indexOf(stationZip) > -1) {
+    problemStations[obj] = stationsObj[obj];
+  }
+};
+
 
 // Will need to do something like checking in if the zip is in zipObj, if yes, use
 // state info, else go to a switch statement with the values that I have manually
@@ -63,5 +85,3 @@ for (let i = 0; i < stateNumbersArray.length; i++) {
   let stateName = stateNumbersArray[i][2];
   stateNumbersObj[stateNum] = stateName;
 }
-
-console.log(stateNumbersObj);

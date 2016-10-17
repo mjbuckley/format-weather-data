@@ -11,6 +11,8 @@
 // nested so much (like "precip", "snow", and "location" keys).
 // Improve naming and documentation. Some names are very confusing (ex: called
 // ..Array when they are objects, etc.).
+// -Why are the so many stations with incomplete data? 9000ish stations in zip
+// table but only 4000ish with full info. Is there something I'm missing?
 
 
 const fs = require('fs');
