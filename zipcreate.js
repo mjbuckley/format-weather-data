@@ -1,12 +1,17 @@
 const fs = require('fs');
 const formatZctaData = require('./lib/formatzctadata.js');
 const formatStateNumbers = require('./lib/formatstatenumbers.js');
-
-// const stationsObj = fs.readFileSync('weather.json', 'utf8');
 const stationsObj = require('./weather.json');
 
+
+// Mapping zip codes to states is difficult (perhaps impossible), but the US Census
+// Bureau Zip Code Tabulation Area data seems to be the best way I can relatively
+// easily aproximate a mapping.
 const zipData = fs.readFileSync('data/zcta_place_rel_10.txt', 'utf8');
 let zipArray = formatZctaData(zipData);
+
+console.log(zipArray[zipArray.length-1]);
+
 
 // Remove everything except zip and state
 zipArray = zipArray.map(function(arr) {
@@ -56,7 +61,6 @@ for (let arr of zipArray) {
 // not to be using them based on the specific weather info I'm using).
 
 let problemZips = Object.keys(problems);
-console.log(problemZips);
 let problemStations = {};
 
 // List of all stations that need to be manually assigned a zip
@@ -66,11 +70,6 @@ for (let obj in stationsObj) {
     problemStations[obj] = stationsObj[obj];
   }
 };
-
-
-// Will need to do something like checking in if the zip is in zipObj, if yes, use
-// state info, else go to a switch statement with the values that I have manually
-// resolved.
 
 
 // Create stateNumbersObj, which contains key-value pairs mapping the state number
@@ -84,4 +83,12 @@ for (let i = 0; i < stateNumbersArray.length; i++) {
   let stateNum = stateNumbersArray[i][0];
   let stateName = stateNumbersArray[i][2];
   stateNumbersObj[stateNum] = stateName;
+}
+
+
+// Change states in zipObj from numbers to state names
+for (let obj in zipObj) {
+  let state = zipObj[obj];
+  let newState = stateNumbersObj[state];
+  zipObj[obj] = newState;
 }
