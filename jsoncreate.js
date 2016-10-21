@@ -14,17 +14,24 @@
 // -Why are the so many stations with incomplete data? 9000ish stations in zip
 // table but only 4000ish with full info. Is there something I'm missing?
 
-
-const fs = require('fs');
+const addBelow32 = require('./lib/addBelow32.js');
+const addMaxMin = require('./lib/addmaxmin.js');
+const addMlyTMax = require('./lib/addmlytmax.js');
+const addMlyTMin = require('./lib/addmlytmin.js');
+const addStateNames = require('./lib/addstatenames.js');
+const createMinMax = require('./lib/createminmax.js');
 const createStationsObj = require('./lib/createstationsobj.js');
 const fixDecimal = require('./lib/fixdecimal.js');
 const fixDecimal13C = require('./lib/fixDecimal13c.js');
 const fixSpecialValues = require('./lib/fixspecialvalues.js');
 const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
-const formatNoaaData = require('./lib/formatnoaadata.js');
+const formatZctaData = require('./lib/formatzctadata.js');
+const fs = require('fs');
+const inchPlusSnow = require('./lib/inchplussnow.js');
+const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
+const rainGdHalfIn = require('./lib/raingdhalfin.js');
 const separateFlags2C = require('./lib/separateflags2c.js');
 const separateFlags13C = require('./lib/separateflags13c.js');
-const addMaxMin = require('./lib/addmaxmin.js');
 
 
 // Create stationsObj and build its initial structure. Built from NOAA's list of
@@ -32,117 +39,41 @@ const addMaxMin = require('./lib/addmaxmin.js');
 // will be the keys of stationsObj, and the corresponding info will be stored as
 // the value.
 const stationData = fs.readFileSync('data/zipcodes-normals-stations.txt', 'utf8');
-let stationsObj = formatNoaaData(stationData);
-stationsObj = createStationsObj(stationsObj);
+let stationsObj = createStationsObj(stationData);
 
 
 // Create formatted array of average numnber of days with at least an inch of
 // snow.
 const rawSnowData = fs.readFileSync('data/ann-snow-avgnds-ge010ti.txt', 'utf8');
-let snowInfo = formatNoaaData(rawSnowData);
-snowInfo = separateFlags2C(snowInfo);
-snowInfo = fixSpecialValues(snowInfo);
-snowInfo = fixDecimal(snowInfo);
-
-// Add snowInfo data to stationsObj.
-for (let i of snowInfo) {
-  const station = i[0];
-  const snowfall = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["snow"]["annInchPlus"] = snowfall;
-  }
-};
+stationsObj = inchPlusSnow(rawSnowData, stationsObj);
 
 
 // Create formatted array of average number of days with at least an inch of
 // snow ground cover.
 const snowGndData = fs.readFileSync('data/ann-snwd-avgnds-ge001wi.txt', 'utf8');
-let snowGndInfo = formatNoaaData(snowGndData);
-snowGndInfo = separateFlags2C(snowGndInfo);
-snowGndInfo = fixSpecialValues(snowGndInfo);
-snowGndInfo = fixDecimal(snowGndInfo);
-
-// Add snow ground cover info to stationsObj.
-for (let i of snowGndInfo) {
-  const station = i[0];
-  const snowdays = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["snow"]["annGndInchPlus"] = snowdays;
-  }
-};
+stationsObj = inchPlusSnowGnd(snowGndData, stationsObj);
 
 
 // Create formtted array of average number of days with at least .5 inch of
 // precipitation.
-const annRainData = fs.readFileSync('data/ann-prcp-avgnds-ge050hi.txt', 'utf8');
-let annRainInfo = formatNoaaData(annRainData);
-annRainInfo = separateFlags2C(annRainInfo);
-annRainInfo = fixSpecialValues(annRainInfo);
-annRainInfo = fixDecimal(annRainInfo);
-
-// Add precip info to stationsObj.
-for (let i of annRainInfo) {
-  const station = i[0];
-  const rainDays = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["precip"]["annprcpge050hi"] = rainDays;
-  }
-};
+const rainGdHalfInData = fs.readFileSync('data/ann-prcp-avgnds-ge050hi.txt', 'utf8');
+stationsObj = rainGdHalfIn(rainGdHalfInData, stationsObj);
 
 
 // Create a formatted array of monthly average max temperature
 const mlyTMaxData = fs.readFileSync('data/mly-tmax-normal.txt', 'utf8');
-let mlyTMaxInfo = formatNoaaData(mlyTMaxData);
-mlyTMaxInfo = separateFlags13C(mlyTMaxInfo);
-mlyTMaxInfo = fixSpecialValues13C(mlyTMaxInfo);
-mlyTMaxInfo = fixDecimal13C(mlyTMaxInfo);
-mlyTMaxInfo = addMaxMin(mlyTMaxInfo, "max");
-
-// Add monthly tmax averages to stationsObj.
-for (let i of mlyTMaxInfo) {
-  const station = i[0];
-  const tempArray = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["temp"]["mlyTMaxAvg"] = tempArray;
-  }
-};
+stationsObj = addMlyTMax(mlyTMaxData, stationsObj);
 
 
-// Create a formatted array of monthly average max temperature
+// Create a formatted array of monthly average min temperature
 const mlyTMinData = fs.readFileSync('data/mly-tmin-normal.txt', 'utf8');
-let mlyTMinInfo = formatNoaaData(mlyTMinData);
-mlyTMinInfo = separateFlags13C(mlyTMinInfo);
-mlyTMinInfo = fixSpecialValues13C(mlyTMinInfo);
-mlyTMinInfo = fixDecimal13C(mlyTMinInfo);
-mlyTMinInfo = addMaxMin(mlyTMinInfo, "min");
-
-// Add monthly tminaverages to stationsObj.
-for (let i of mlyTMinInfo) {
-  const station = i[0];
-  const tempArray = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["temp"]["mlyTMinInfo"] = tempArray;
-  }
-};
+stationsObj = addMlyTMin(mlyTMinData, stationsObj);
 
 
 // Create formatted array of average numnber of days where the temp drops below
 // freezing at some point.
 const below32Data = fs.readFileSync('data/ann-tmin-avgnds-lsth032.txt', 'utf8');
-let below32Info = formatNoaaData(below32Data);
-below32Info = separateFlags2C(below32Info);
-below32Info = fixSpecialValues(below32Info);
-below32Info = fixDecimal(below32Info);
-
-// Add below32Info data to stationsObj.
-for (let i of below32Info) {
-  const station = i[0];
-  const below32 = i[1];
-  if (stationsObj[station]) {
-    stationsObj[station]["temp"]["daysBelow32"] = below32;
-  }
-};
-
+stationsObj = addBelow32(below32Data, stationsObj);
 
 
 // Remove all stations with incomplete information.
@@ -158,45 +89,12 @@ for(let obj in stationsObj) {
 };
 
 
+// Add states to stationsObj based off of zip codes
+stationsObj = addStateNames(stationsObj);
+
+
 // Compute min and max values for use with input range slider.
-let valuesArray = {
-  "annInchPlus": [],
-  "annGndInchPlus": [],
-  "annprcpge050hi": [],
-  "mlyTMaxAvg": [],
-  "mlyTMinInfo": [],
-  "daysBelow32": []
-};
-
-for(let obj in stationsObj) {
-  valuesArray["annInchPlus"].push(stationsObj[obj]["snow"]["annInchPlus"]);
-  valuesArray["annGndInchPlus"].push(stationsObj[obj]["snow"]["annGndInchPlus"]);
-  valuesArray["annprcpge050hi"].push(stationsObj[obj]["precip"]["annprcpge050hi"]);
-  valuesArray["mlyTMaxAvg"].push(stationsObj[obj]["temp"]["mlyTMaxAvg"][12]);
-  valuesArray["mlyTMinInfo"].push(stationsObj[obj]["temp"]["mlyTMinInfo"][12]);
-  valuesArray["daysBelow32"].push(stationsObj[obj]["temp"]["daysBelow32"]);
-};
-
-let minMaxArray = {
-  "annInchPlus": [],
-  "annGndInchPlus": [],
-  "annprcpge050hi": [],
-  "mlyTMaxAvg": [],
-  "mlyTMinInfo": [],
-  "daysBelow32": []
-};
-
-for (let obj in valuesArray) {
-  let allValuesArray = valuesArray[obj];
-  minMaxArray[obj].push(Math.min(...allValuesArray));
-  minMaxArray[obj].push(Math.max(...allValuesArray));
-};
-
-// Round min values down and max values up.
-for (let arr in minMaxArray) {
-  minMaxArray[arr][0] = Math.floor(minMaxArray[arr][0]);
-  minMaxArray[arr][1] = Math.ceil(minMaxArray[arr][1]);
-};
+let minMaxArray = createMinMax(stationsObj);
 
 
 // OUTPUT INFORMATION:

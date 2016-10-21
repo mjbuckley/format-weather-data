@@ -1,3 +1,27 @@
+TO DO:
+0) I've got states for most of the zips missing from the zcta data, but there are about 30 still to
+work on (most are pretty weird). Also, I see that my mapping but Frederikted in PR but it is in the
+Virgin Islands.
+0.5) Look more at the noaa data files. There are other station info files that might be useful. Also, a
+pdf that explains a lot about the data (like the precip is water, etc.)
+1) TO FIX: (I think this is wrong, but I still need to better understand path useage here).
+I thought that the path when using require('file') was relative to the file where
+require was used, but I think it is really from where it is being run from. So, assuming
+I'm always running from the project root, then some of my requires should be different (in
+some cases they may still work right now based on how node tries to find things, but I shouldn't
+rely on that working). Also, verify this new understanding is correct.
+
+2) figure out what to do with problems/send console message
+
+3) Integrate zip info into weather.json build
+
+4) make some sort of centralized location of values that I can pull from (such as all weather items
+being used). That way I can just add changes and pull from there and not need to remember to cheange/add
+values in every place that they are used.
+
+
+
+
 stationsObj = { station1: {nested info}, station2: {nested info}, etc. }
 
 
@@ -6,7 +30,8 @@ Example Station:
 "VQW00011624": {
   "location": {
     "zip": "00840",
-    "city": "Frederiksted"
+    "city": "Frederiksted",
+    "state": ""
   },
   "snow": {
     "annInchPlus": "0.0",
@@ -38,3 +63,10 @@ minMaxArray:
 Sources:
 
 State ID to state name: http://www2.census.gov/geo/docs/reference/state.txt
+
+A note on problem zips. I create a list of problem zips that map to two states, and I then
+check to see if any station zip matches a problem zip. The weather.json build will still
+work if there are any problems with the station zips, but there will be a warning (with station info).
+However, in practice, none of the station zips match a problem zip. This will never change unless I start
+using new data. So, I'm hesitant to build a manual resolution process for something I'll probably never
+need. Just keep in mind that I'll need to add that if I ever change data and get stations with problem zips.
