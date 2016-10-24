@@ -16,6 +16,7 @@
 
 const addBelow32 = require('./lib/addBelow32.js');
 const addMaxMin = require('./lib/addmaxmin.js');
+const addMetroMicro = require('./lib/addmetromicro.js');
 const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
 const addStateNames = require('./lib/addstatenames.js');
@@ -91,6 +92,10 @@ for(let obj in stationsObj) {
 
 // Add states to stationsObj based off of zip codes
 stationsObj = addStateNames(stationsObj);
+
+
+// Add metro and micropolitan info to stations
+stationsObj = addMetroMicro(stationsObj);
 
 
 // Compute min and max values for use with input range slider.

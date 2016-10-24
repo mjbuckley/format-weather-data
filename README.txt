@@ -1,9 +1,7 @@
 TO DO:
-0) I've got states for most of the zips missing from the zcta data, but there are about 30 still to
-work on (most are pretty weird). Also, I see that my mapping but Frederikted in PR but it is in the
-Virgin Islands.
-0.5) Look more at the noaa data files. There are other station info files that might be useful. Also, a
-pdf that explains a lot about the data (like the precip is water, etc.)
+0) There are some stations that are weird, with conflicting location info. These sometimes have
+non existant zips like 000xx. Often in parks, etc. Figure out how to deal with.
+0.5) What to do with stations outside the 50 states.
 1) TO FIX: (I think this is wrong, but I still need to better understand path useage here).
 I thought that the path when using require('file') was relative to the file where
 require was used, but I think it is really from where it is being run from. So, assuming
@@ -62,7 +60,8 @@ minMaxArray:
 
 Sources:
 
-State ID to state name: http://www2.census.gov/geo/docs/reference/state.txt
+-State ID to state name: http://www2.census.gov/geo/docs/reference/state.txt
+-CBSA data: http://www.census.gov/population/metro/files/lists/2015/List1.xls
 
 A note on problem zips. I create a list of problem zips that map to two states, and I then
 check to see if any station zip matches a problem zip. The weather.json build will still
