@@ -1,38 +1,33 @@
-// Run this file from the command line to create weather.json, a file containing
-// all of the JSON formatted NOAA data that will be used on the city-weather-app
-// site. If weather.json already exists, it will be overwritten.
+// Run this file from the command line to create weather.json and minmax.json.
+// weather.json contains all of the station and weather info needed for use in
+// the weather app (see README for sample data and useage instructions).
+// minmax.json contains the min and max values for each weather item.
+// If the files already exist then they will be overwritten.
 
 
-// NOTES:
-// -For now I am ommiting the flags from weather.json because I'm not using
-// them in the app. I can always add in the future.
-// -Todo: Make stationsObj smaller by (1) making key names shorter, (2)
-// removing stations not in the 50 states, and (3) perhaps not having things
-// nested so much (like "precip", "snow", and "location" keys).
-// Improve naming and documentation. Some names are very confusing (ex: called
-// ..Array when they are objects, etc.).
-// -Why are the so many stations with incomplete data? 9000ish stations in zip
-// table but only 4000ish with full info. Is there something I'm missing?
+
+// const addMaxMin = require('./lib/addmaxmin.js');
+// const fixDecimal = require('./lib/fixdecimal.js');
+// const fixDecimal13C = require('./lib/fixDecimal13c.js');
+// const fixSpecialValues = require('./lib/fixspecialvalues.js');
+// const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
+// const formatZctaData = require('./lib/formatzctadata.js');
+// const separateFlags2C = require('./lib/separateflags2c.js');
+// const separateFlags13C = require('./lib/separateflags13c.js');
+
 
 const addBelow32 = require('./lib/addBelow32.js');
-const addMaxMin = require('./lib/addmaxmin.js');
 const addMetroMicro = require('./lib/addmetromicro.js');
 const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
 const addStateNames = require('./lib/addstatenames.js');
 const createMinMax = require('./lib/createminmax.js');
 const createStationsObj = require('./lib/createstationsobj.js');
-const fixDecimal = require('./lib/fixdecimal.js');
-const fixDecimal13C = require('./lib/fixDecimal13c.js');
-const fixSpecialValues = require('./lib/fixspecialvalues.js');
-const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
-const formatZctaData = require('./lib/formatzctadata.js');
 const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
 const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
 const rainGdHalfIn = require('./lib/raingdhalfin.js');
-const separateFlags2C = require('./lib/separateflags2c.js');
-const separateFlags13C = require('./lib/separateflags13c.js');
+
 
 
 // Create stationsObj and build its initial structure. Built from NOAA's list of
@@ -43,62 +38,66 @@ const stationData = fs.readFileSync('data/zipcodes-normals-stations.txt', 'utf8'
 let stationsObj = createStationsObj(stationData);
 
 
-// Create formatted array of average numnber of days with at least an inch of
-// snow.
+// Add average numnber of days with at least an inch of snowfall to stationsObj.
 const rawSnowData = fs.readFileSync('data/ann-snow-avgnds-ge010ti.txt', 'utf8');
 stationsObj = inchPlusSnow(rawSnowData, stationsObj);
 
 
-// Create formatted array of average number of days with at least an inch of
-// snow ground cover.
+// Add average number of days with at least an inch of snow ground cover to stationsObj.
 const snowGndData = fs.readFileSync('data/ann-snwd-avgnds-ge001wi.txt', 'utf8');
 stationsObj = inchPlusSnowGnd(snowGndData, stationsObj);
 
 
-// Create formtted array of average number of days with at least .5 inch of
-// precipitation.
+// Add average number of days with at least 1/2 inch of precipitation to stationsObj
 const rainGdHalfInData = fs.readFileSync('data/ann-prcp-avgnds-ge050hi.txt', 'utf8');
 stationsObj = rainGdHalfIn(rainGdHalfInData, stationsObj);
 
 
-// Create a formatted array of monthly average max temperature
+// Add array of monthly average max temperature to stationsObj. Elements 0-11 are
+// for jan-dec, element 12 is the highest of the 12 values.
 const mlyTMaxData = fs.readFileSync('data/mly-tmax-normal.txt', 'utf8');
 stationsObj = addMlyTMax(mlyTMaxData, stationsObj);
 
 
-// Create a formatted array of monthly average min temperature
+// Add array of monthly average min temperature to stationsObj. Elements 0-11 are
+// for jan-dec, element 12 is the lowest of the 12 values.
 const mlyTMinData = fs.readFileSync('data/mly-tmin-normal.txt', 'utf8');
 stationsObj = addMlyTMin(mlyTMinData, stationsObj);
 
 
-// Create formatted array of average numnber of days where the temp drops below
-// freezing at some point.
+// Add average numnber of days where the temp drops below freezing to stationsObj.
 const below32Data = fs.readFileSync('data/ann-tmin-avgnds-lsth032.txt', 'utf8');
 stationsObj = addBelow32(below32Data, stationsObj);
 
 
-// Remove all stations with incomplete information.
-for(let obj in stationsObj) {
-  if( stationsObj[obj]["snow"]["annInchPlus"] === "" ||
-      stationsObj[obj]["snow"]["annGndInchPlus"] === "" ||
-      stationsObj[obj]["precip"]["annprcpge050hi"] === "" ||
-      stationsObj[obj]["temp"]["mlyTMaxAvg"].length === 0 ||
-      stationsObj[obj]["temp"]["mlyTMinInfo"].length === 0 ||
-      stationsObj[obj]["temp"]["daysBelow32"] === "" ) {
-        delete stationsObj[obj];
+// Remove all stations with incomplete information (all stations do not record all
+// types of data).
+for (let station in stationsObj) {
+  if( stationsObj[station]["snow"]["annInchPlus"] === "" ||
+      stationsObj[station]["snow"]["annGndInchPlus"] === "" ||
+      stationsObj[station]["precip"]["annprcpge050hi"] === "" ||
+      stationsObj[station]["temp"]["mlyTMaxAvg"].length === 0 ||
+      stationsObj[station]["temp"]["mlyTMinInfo"].length === 0 ||
+      stationsObj[station]["temp"]["daysBelow32"] === "" ) {
+        delete stationsObj[station];
   }
 };
 
 
-// Add states to stationsObj based off of zip codes
+// Find the state for each station and add it to stationsObj. Currently 2 letter
+// abreviations are used, and some non-state US territories are included.
 stationsObj = addStateNames(stationsObj);
 
 
-// Add metro and micropolitan info to stations
+// Deterine if a station lies within a larger metro or micropolitan area, and add
+// that info if it does. Note that some stations belong to more than one area, in
+// which case all areas will be added. Stored in an array, and currently using the
+// cbsa id numbers.
 stationsObj = addMetroMicro(stationsObj);
 
 
-// Compute min and max values for use with input range slider.
+// Compute the min and max values for each weather observation being used. This will
+// be used to set min/max values for input range sliders in the weather app.
 let minMaxArray = createMinMax(stationsObj);
 
 
