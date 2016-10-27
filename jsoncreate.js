@@ -5,17 +5,6 @@
 // If the files already exist then they will be overwritten.
 
 
-
-// const addMaxMin = require('./lib/addmaxmin.js');
-// const fixDecimal = require('./lib/fixdecimal.js');
-// const fixDecimal13C = require('./lib/fixDecimal13c.js');
-// const fixSpecialValues = require('./lib/fixspecialvalues.js');
-// const fixSpecialValues13C = require('./lib/fixspecialvalues13c.js');
-// const formatZctaData = require('./lib/formatzctadata.js');
-// const separateFlags2C = require('./lib/separateflags2c.js');
-// const separateFlags13C = require('./lib/separateflags13c.js');
-
-
 const addBelow32 = require('./lib/addBelow32.js');
 const addMetroMicro = require('./lib/addmetromicro.js');
 const addMlyTMax = require('./lib/addmlytmax.js');
@@ -27,7 +16,6 @@ const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
 const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
 const rainGdHalfIn = require('./lib/raingdhalfin.js');
-
 
 
 // Create stationsObj and build its initial structure. Built from NOAA's list of
@@ -77,7 +65,7 @@ for (let station in stationsObj) {
       stationsObj[station]["snow"]["annGndInchPlus"] === "" ||
       stationsObj[station]["precip"]["annprcpge050hi"] === "" ||
       stationsObj[station]["temp"]["mlyTMaxAvg"].length === 0 ||
-      stationsObj[station]["temp"]["mlyTMinInfo"].length === 0 ||
+      stationsObj[station]["temp"]["mlyTMinAvg"].length === 0 ||
       stationsObj[station]["temp"]["daysBelow32"] === "" ) {
         delete stationsObj[station];
   }
