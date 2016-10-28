@@ -44,10 +44,15 @@ Sources:
 -State ID to state name: http://www2.census.gov/geo/docs/reference/state.txt
 -CBSA data: http://www.census.gov/population/metro/files/lists/2015/List1.xls
 -HUD zip code (not zcta) to zip map. File is ZIP_CBSA_092016.xlsx. Found at:https://www.huduser.gov/portal/datasets/usps_crosswalk.html
+-https://www.whitehouse.gov/sites/default/files/omb/bulletins/2015/15-01.pdf for ....4 cbsa info
 
 
 
 TO DO:
+
+-MOSTLY HAVE THE cbsa problem solved, just need to clean up and document. One uncertainty is all of the NaNs
+that are showing up in the missing array.
+
 -THERE IS A PROBLEM WITH THE CBSA MAP IN THAT THERE ARE SOME CBSA CODES THAT SEEM TO BE REAL(ACCORDING TO
 THE ZCTA TO CBSA DATA) BUT WHICH ARE MISSING FROM THE CBSA-DATA FILE. FIGURE THIS OUT.
 -I've removed unused code, but there is still some unused data around (copy to archive if relevant).
