@@ -53,6 +53,9 @@ TO DO:
 -MOSTLY HAVE THE cbsa problem solved, just need to clean up and document. One uncertainty is all of the NaNs
 that are showing up in the missing array.
 
+-implement some sort of cbsa area count. If only 1 station for a given area then no need to display a link
+to other stations in the same area.
+
 -THERE IS A PROBLEM WITH THE CBSA MAP IN THAT THERE ARE SOME CBSA CODES THAT SEEM TO BE REAL(ACCORDING TO
 THE ZCTA TO CBSA DATA) BUT WHICH ARE MISSING FROM THE CBSA-DATA FILE. FIGURE THIS OUT.
 -I've removed unused code, but there is still some unused data around (copy to archive if relevant).
@@ -75,6 +78,9 @@ be doing things wrong but getting it to work accidentally.
 -Look in to ways to make stationsObj smaller.
 -Improve naming and documentation. Some names are very confusing (ex: called somethingArray when it is
 actually an object, etc.).
+-Be careful with type (specifically text vs num). I'm using numbers a lot with things like zip and cbsa.
+Sometimes those are stored as strings(esp. if they are object props), other times as numbers. Be sure I
+know in what form something is.
 
 
 NOTES:
