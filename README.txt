@@ -10,6 +10,7 @@ EXAMPLE STATION (data not real):
     "zip": "00840",
     "city": "Frederiksted",
     "area": [cbsa1, cbsa2] // Metro/micro area. Usually only one, but can be more than one.
+    "sharedarea": [cbsa1] // Metro/micro area that is shared with at least one other station
     "state": "OH"
   },
   "snow": {
@@ -50,11 +51,8 @@ Sources:
 
 TO DO:
 
--MOSTLY HAVE THE cbsa problem solved, just need to clean up and document. One uncertainty is all of the NaNs
-that are showing up in the missing array.
-
--implement some sort of cbsa area count. If only 1 station for a given area then no need to display a link
-to other stations in the same area.
+-10/29: NEED TO finish implementing the cbsa area count. If only 1 station for a given area then no need to display a link
+to other stations in the same area. (being done in addMetroMicro).
 
 -THERE IS A PROBLEM WITH THE CBSA MAP IN THAT THERE ARE SOME CBSA CODES THAT SEEM TO BE REAL(ACCORDING TO
 THE ZCTA TO CBSA DATA) BUT WHICH ARE MISSING FROM THE CBSA-DATA FILE. FIGURE THIS OUT.
