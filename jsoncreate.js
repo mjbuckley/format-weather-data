@@ -16,6 +16,7 @@ const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
 const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
 const rainGdHalfIn = require('./lib/raingdhalfin.js');
+const sortByCity = require('./lib/sortbycity.js');
 
 
 // Create stationsObj and build its initial structure. Built from NOAA's list of
@@ -82,6 +83,12 @@ stationsObj = addStateNames(stationsObj);
 // which case all areas will be added. Also, find if a station's metro/micro area
 // also has other stations and make note of this.
 stationsObj = addMetroMicro(stationsObj);
+
+
+// Sort stationsObj alphabetically by city name (subsorted by state if a city names
+// exists in multipl states). Station IDs remain the keys, but they will now be ordered
+// based on their corresponding city name.
+stationsObj = sortByCity(stationsObj);
 
 
 // Compute the min and max values for each weather observation being used. This will
