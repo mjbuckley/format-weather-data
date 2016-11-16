@@ -1,28 +1,22 @@
 STATIONS OBJECT: Object with station IDs as the properties and their info as the values.
 
-stationsObj = { station1: {nested info}, station2: {nested info}, etc. }
+stationsObj = { station1: {info}, station2: {info}, etc. }
 
 
 EXAMPLE STATION (data not real):
 
 "VQW00011624": {
-  "location": {
     "zip": "00840",
     "city": "Frederiksted",
-    "area": [cbsa1, cbsa2] // Metro/micro area. Usually only one, but can be more than one.
-    "sharedarea": [cbsa1] // Metro/micro area that is shared with at least one other station
-    "state": "OH"
-  },
-  "snow": {
+    "area": [cbsa1, cbsa2], // Metro/micro area. Usually only one, but can be more than one.
+    "sharedarea": [cbsa1], // Metro/micro area that is shared with at least one other station
+    "state": "OH",
     "annInchPlus": "0.0",
-    "annGndInchPlus": "0.0"
-  },
-  "precip": {
-    "annprcpge050hi": "18.8"
-  },
-  "temp": { // max and min [0]-[11] are jan-dec values, [12] is the max/min of those values
+    "annGndInchPlus": "0.0",
+    "annprcpge050hi": "18.8",
     "mlyTMaxAvg": ["84.0","84.0","84.6","85.7","86.7","87.9","88.7","89.2","89.0","87.8","86.3","84.7",89.2],
     "mlyTMinAvg": ["72.4","72.3","72.5","74.2","76.1","78.1","78.5","78.4","77.3","76.4","75.0","73.4",72.3],
+      // max and min [0]-[11] are jan-dec values, [12] is the max/min of those values
     "daysBelow32": "0.0"
   }
 }
@@ -79,8 +73,3 @@ actually an object, etc.).
 -Be careful with type (specifically text vs num). I'm using numbers a lot with things like zip and cbsa.
 Sometimes those are stored as strings(esp. if they are object props), other times as numbers. Be sure I
 know in what form something is.
-
-
-NOTES:
--For now I am omitting the flags from weather.json because I'm not using them in the app. I can always add
-in the future.
