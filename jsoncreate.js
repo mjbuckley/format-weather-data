@@ -11,6 +11,7 @@ const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
 const addStateNames = require('./lib/addstatenames.js');
 const createMinMax = require('./lib/createminmax.js');
+const createSharedCity = require('./lib/createsharedcity.js');
 const createStationsObj = require('./lib/createstationsobj.js');
 const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
@@ -89,6 +90,35 @@ stationsObj = addMetroMicro(stationsObj);
 // exists in multipl states). Station IDs remain the keys, but they will now be ordered
 // based on their corresponding city name.
 stationsObj = sortByCity(stationsObj);
+
+
+// Many cities have more than one weather station. Find those cities and for them add
+// an array with the values of all stations in that city.
+stationsObj = createSharedCity(stationsObj);
+
+// Below was something I wrote to see the number of citis with more than one station
+// There's no need to print this out regularly, but I'm keeping around because
+// I could see using again sometime.
+// 
+// function nameCheck(xxx) {
+//   let duplicates = {};
+//   for (let station in xxx) {
+//     if (xxx[station]["multiCity"].length > 0) {
+//       let city = xxx[station]["city"];
+//       let state = xxx[station]["state"];
+//       let name = city + state;
+//
+//       if (duplicates[name]) {
+//         duplicates[name]++;
+//       } else {
+//         duplicates[name] = 1;
+//       }
+//     }
+//   }
+//   return duplicates;
+// }
+//
+// console.log(nameCheck(stationsObj));
 
 
 // Compute the min and max values for each weather observation being used. This will
