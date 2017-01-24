@@ -99,7 +99,7 @@ stationsObj = createSharedCity(stationsObj);
 // Below was something I wrote to see the number of citis with more than one station
 // There's no need to print this out regularly, but I'm keeping around because
 // I could see using again sometime.
-// 
+//
 // function nameCheck(xxx) {
 //   let duplicates = {};
 //   for (let station in xxx) {
