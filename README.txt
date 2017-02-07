@@ -8,6 +8,7 @@ EXAMPLE STATION (data not real):
 "VQW00011624": {
     "zip": "00840",
     "city": "Frederiksted",
+    "multiCity": [], // if the city has multiple stations then all stations in that city listed here
     "area": [cbsa1, cbsa2], // Metro/micro area. Usually only one, but can be more than one.
     "sharedarea": [cbsa1], // Metro/micro area that is shared with at least one other station
     "state": "OH",

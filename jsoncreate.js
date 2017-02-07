@@ -10,6 +10,7 @@ const addMetroMicro = require('./lib/addmetromicro.js');
 const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
 const addStateNames = require('./lib/addstatenames.js');
+const buildMetroCityList = require('./lib/buildmetrocitylist.js');
 const createMinMax = require('./lib/createminmax.js');
 const createSharedCity = require('./lib/createsharedcity.js');
 const createStationsObj = require('./lib/createstationsobj.js');
@@ -121,6 +122,11 @@ stationsObj = createSharedCity(stationsObj);
 // console.log(nameCheck(stationsObj));
 
 
+// Build object that lists cities and stations in each metro area (see function for
+// more info).
+let metroMap = buildMetroCityList(stationsObj);
+
+
 // Compute the min and max values for each weather observation being used. This will
 // be used to set min/max values for input range sliders in the weather app.
 let minMaxArray = createMinMax(stationsObj);
@@ -141,6 +147,15 @@ fs.writeFile('weather.json', stationsObjJson, function(err) {
 const minMaxArrayJson = JSON.stringify(minMaxArray);
 
 fs.writeFile('minmax.json', minMaxArrayJson, function(err) {
+  if (err) {
+    return console.error(err);
+  };
+});
+
+// Turn metroMap into JSON and output file.
+const metroMapJson = JSON.stringify(metroMap);
+
+fs.writeFile('metromap.json', metroMapJson, function(err) {
   if (err) {
     return console.error(err);
   };
