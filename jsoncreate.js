@@ -64,12 +64,12 @@ stationsObj = addBelow32(below32Data, stationsObj);
 // Remove all stations with incomplete information (all stations do not record all
 // types of data).
 for (let station in stationsObj) {
-  if( stationsObj[station]["annInchPlus"] === "" ||
-      stationsObj[station]["annGndInchPlus"] === "" ||
-      stationsObj[station]["annprcpge050hi"] === "" ||
-      stationsObj[station]["mlyTMaxAvg"].length === 0 ||
-      stationsObj[station]["mlyTMinAvg"].length === 0 ||
-      stationsObj[station]["daysBelow32"] === "" ) {
+  if( stationsObj[station]["andSnGe1"] === "" ||
+      stationsObj[station]["andSnCGe1"] === "" ||
+      stationsObj[station]["andPrGe5Ti"] === "" ||
+      stationsObj[station]["mTmxAv"].length === 0 ||
+      stationsObj[station]["mTmnAv"].length === 0 ||
+      stationsObj[station]["andTmnLe32"] === "" ) {
         delete stationsObj[station];
   }
 };

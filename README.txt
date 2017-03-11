@@ -12,13 +12,13 @@ EXAMPLE STATION (data not real):
     "area": [cbsa1, cbsa2], // Metro/micro area. Usually only one, but can be more than one. Form is "metro name, state(s) name," to distinguish different metro areas with same name (ex. Columbus)
     "sharedarea": [cbsa1], // Metro/micro area that is shared with at least one other station
     "state": "OH",
-    "annInchPlus": "0.0",
-    "annGndInchPlus": "0.0",
-    "annprcpge050hi": "18.8",
-    "mlyTMaxAvg": ["84.0","84.0","84.6","85.7","86.7","87.9","88.7","89.2","89.0","87.8","86.3","84.7",89.2],
-    "mlyTMinAvg": ["72.4","72.3","72.5","74.2","76.1","78.1","78.5","78.4","77.3","76.4","75.0","73.4",72.3],
+    "andSnGe1": "0.0",
+    "andSnCGe1": "0.0",
+    "andPrGe5Ti": "18.8",
+    "mTmxAv": ["84.0","84.0","84.6","85.7","86.7","87.9","88.7","89.2","89.0","87.8","86.3","84.7",89.2],
+    "mTmnAv": ["72.4","72.3","72.5","74.2","76.1","78.1","78.5","78.4","77.3","76.4","75.0","73.4",72.3],
       // max and min [0]-[11] are jan-dec values, [12] is the max/min of those values
-    "daysBelow32": "0.0"
+    "andTmnLe32": "0.0"
   }
 }
 
@@ -26,12 +26,12 @@ EXAMPLE STATION (data not real):
 MIN MAX ARRAY: Range of min and max possible values for each weather measurement. Min rounded down, max up.
 
 {
-  "annInchPlus":[0,93],
-  "annGndInchPlus":[0,247],
-  "annprcpge050hi":[0,135],
-  "mlyTMaxAvg":[46,117],
-  "mlyTMinAvg":[-27,73],
-  "daysBelow32":[0,308]
+  "andSnGe1":[0,93],
+  "andSnCGe1":[0,247],
+  "andPrGe5Ti":[0,135],
+  "mTmxAv":[46,117],
+  "mTmnAv":[-27,73],
+  "andTmnLe32":[0,308]
 }
 
 
