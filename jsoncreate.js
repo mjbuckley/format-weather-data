@@ -14,6 +14,7 @@ const buildMetroCityList = require('./lib/buildmetrocitylist.js');
 const createMinMax = require('./lib/createminmax.js');
 const createSharedCity = require('./lib/createsharedcity.js');
 const createStationsObj = require('./lib/createstationsobj.js');
+const findDefaultMatches = require('./lib/finddefaultmatches.js');
 const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
 const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
@@ -132,6 +133,12 @@ let metroMap = buildMetroCityList(stationsObj);
 let minMaxArray = createMinMax(stationsObj);
 
 
+// Calculate the default station matches based off of the default weather values
+// (found at minMaxArray[weatherValue][2]). This will be used to be used in the weather app.
+// Return value is an object because it's easier to move around this way: {"defaultMatches": [matches array]}.
+// BE SURE TO MANUALLY UPDATE WHEN NEW WEATHER VALUES ARE ADDED
+let defaultMatches = findDefaultMatches(stationsObj, minMaxArray);
+
 // OUTPUT INFORMATION:
 
 // Turn stationsObj into JSON and output file.
@@ -161,5 +168,23 @@ fs.writeFile('metromap.json', metroMapJson, function(err) {
   };
 });
 
+// Turn defaultMatches into JSON and output file.
+const defaultMatchesJson = JSON.stringify(defaultMatches);
+
+fs.writeFile('defaultmatches.json', defaultMatchesJson, function(err) {
+  if (err) {
+    return console.error(err);
+  };
+});
+
+// Export
+
 // Output number of stations in modified stationsObj
 console.log(Object.keys(stationsObj).length + " stations.");
+console.log("Be sure to move move these 4 files over to the app:")
+console.log("1. weather.json");
+console.log("2. minmax.json");
+console.log("3. metromap.json");
+console.log("4. defaultmatches.json");
+console.log("WARNING: If you have added any data to stationsObj you must manually adjust");
+console.log("defaultmatches.js to reflect the changes!");
