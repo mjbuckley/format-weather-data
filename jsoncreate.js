@@ -6,6 +6,7 @@
 
 
 const addBelow32 = require('./lib/addBelow32.js');
+// const addComfortable = require('./lib/addcomfortable.js');
 const addMetroMicro = require('./lib/addmetromicro.js');
 const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
@@ -61,6 +62,13 @@ stationsObj = addMlyTMin(mlyTMinData, stationsObj);
 const below32Data = fs.readFileSync('data/ann-tmin-avgnds-lsth032.txt', 'utf8');
 stationsObj = addBelow32(below32Data, stationsObj);
 
+// Not using below function, but keeping around here in case I change my mind.
+// BE SURE TO READ NOTES in the addComfortable function before uncommenting.
+//
+// Add the number of days where the daily average low temp and average high temp fall
+// within a comfortable range (I'm using 80-40).
+// stationsObj = addComfortable(stationsObj);
+
 
 // Remove all stations with incomplete information (all stations do not record all
 // types of data).
@@ -97,6 +105,7 @@ stationsObj = sortByCity(stationsObj);
 // Many cities have more than one weather station. Find those cities and for them add
 // an array with the values of all stations in that city.
 stationsObj = createSharedCity(stationsObj);
+
 
 // Below was something I wrote to see the number of citis with more than one station
 // There's no need to print this out regularly, but I'm keeping around because
@@ -138,6 +147,8 @@ let minMaxArray = createMinMax(stationsObj);
 // Return value is an object because it's easier to move around this way: {"defaultMatches": [matches array]}.
 // BE SURE TO MANUALLY UPDATE WHEN NEW WEATHER VALUES ARE ADDED
 let defaultMatches = findDefaultMatches(stationsObj, minMaxArray);
+
+
 
 // OUTPUT INFORMATION:
 
