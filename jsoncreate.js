@@ -5,6 +5,8 @@
 // If the files already exist then they will be overwritten.
 
 
+const addAbove60 = require('./lib/addabove60.js');
+const addAbove80 = require('./lib/addabove80.js');
 const addBelow32 = require('./lib/addBelow32.js');
 // const addComfortable = require('./lib/addcomfortable.js');
 const addMetroMicro = require('./lib/addmetromicro.js');
@@ -62,6 +64,17 @@ stationsObj = addMlyTMin(mlyTMinData, stationsObj);
 const below32Data = fs.readFileSync('data/ann-tmin-avgnds-lsth032.txt', 'utf8');
 stationsObj = addBelow32(below32Data, stationsObj);
 
+
+// Add average number of days where the temperature gets above 60
+const above60Data = fs.readFileSync('data/ann-tmax-avgnds-grth060.txt', 'utf8');
+stationsObj = addAbove60(above60Data, stationsObj);
+
+
+// Add average number of days where the temperature gets above 80
+const above80Data = fs.readFileSync('data/ann-tmax-avgnds-grth080.txt', 'utf8');
+stationsObj = addAbove80(above80Data, stationsObj);
+
+
 // Not using below function, but keeping around here in case I change my mind.
 // BE SURE TO READ NOTES in the addComfortable function before uncommenting.
 //
@@ -78,7 +91,9 @@ for (let station in stationsObj) {
       stationsObj[station]["andPrGe5Ti"] === "" ||
       stationsObj[station]["mTmxAv"].length === 0 ||
       stationsObj[station]["mTmnAv"].length === 0 ||
-      stationsObj[station]["andTmnLe32"] === "" ) {
+      stationsObj[station]["andTmnLe32"] === "" ||
+      stationsObj[station]["andTmxGe60"] === "" ||
+      stationsObj[station]["andTmxGe80"] === "") {
         delete stationsObj[station];
   }
 };
@@ -198,4 +213,5 @@ console.log("2. minmax.json");
 console.log("3. metromap.json");
 console.log("4. defaultmatches.json");
 console.log("WARNING: If you have added any data to stationsObj you must manually adjust");
-console.log("defaultmatches.js to reflect the changes!");
+console.log("createminmax.js and defaultmatches.js to reflect the changes! Changes will");
+console.log("also need to be made in the app to be able to use any new data.")
