@@ -14,6 +14,7 @@ const addMlyTMax = require('./lib/addmlytmax.js');
 const addMlyTMin = require('./lib/addmlytmin.js');
 const addStateNames = require('./lib/addstatenames.js');
 const buildMetroCityList = require('./lib/buildmetrocitylist.js');
+const createInputMinMax = require('./lib/createinputminmax.js');
 const createMinMax = require('./lib/createminmax.js');
 const createSharedCity = require('./lib/createsharedcity.js');
 const createStationsObj = require('./lib/createstationsobj.js');
@@ -152,9 +153,14 @@ stationsObj = createSharedCity(stationsObj);
 let metroMap = buildMetroCityList(stationsObj);
 
 
-// Compute the min and max values for each weather observation being used. This will
-// be used to set min/max values for input range sliders in the weather app.
+// Compute the min and max values for each weather observation being used.
 let minMaxArray = createMinMax(stationsObj);
+
+
+// minMaxArray is for weather data. This is mapping of those numbers on to the relevant
+// input values I'm collecting. Ex: the values for "andPrGe5Ti" get tranfered to the actual
+// questions I'm asking ("andPrGe5TiLe" and "andPrGe5TiGe").
+let inputMinMax = createInputMinMax(minMaxArray);
 
 
 // Calculate the default station matches based off of the default weather values
@@ -185,6 +191,15 @@ fs.writeFile('minmax.json', minMaxArrayJson, function(err) {
   };
 });
 
+// Turn inputMinMaxArray into JSON and output file.
+const inputMinMaxJson = JSON.stringify(inputMinMax);
+
+fs.writeFile('inputminmax.json', inputMinMaxJson, function(err) {
+  if (err) {
+    return console.error(err);
+  };
+});
+
 // Turn metroMap into JSON and output file.
 const metroMapJson = JSON.stringify(metroMap);
 
@@ -207,11 +222,13 @@ fs.writeFile('defaultmatches.json', defaultMatchesJson, function(err) {
 
 // Output number of stations in modified stationsObj
 console.log(Object.keys(stationsObj).length + " stations.");
-console.log("Be sure to move move these 4 files over to the app:")
+console.log("Be sure to move move these 5 files over to the app:")
 console.log("1. weather.json");
 console.log("2. minmax.json");
-console.log("3. metromap.json");
-console.log("4. defaultmatches.json");
+console.log("3. inputminmax.json");
+console.log("4. metromap.json");
+console.log("5. defaultmatches.json");
 console.log("WARNING: If you have added any data to stationsObj you must manually adjust");
-console.log("createminmax.js and defaultmatches.js to reflect the changes! Changes will");
-console.log("also need to be made in the app to be able to use any new data.")
+console.log("createminmax.js, createinputminmax, and defaultmatches.js to reflect the");
+console.log("changes! Changes will also need to be made in the app to be able to use any");
+console.log("new data.");
