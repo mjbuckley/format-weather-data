@@ -16,6 +16,7 @@ const addStateNames = require('./lib/addstatenames.js');
 const buildMetroCityList = require('./lib/buildmetrocitylist.js');
 const createInputMinMax = require('./lib/createinputminmax.js');
 const createMinMax = require('./lib/createminmax.js');
+const createWeatherOptions = require('./lib/createweatheroptions.js');
 const createSharedCity = require('./lib/createsharedcity.js');
 const createStationsObj = require('./lib/createstationsobj.js');
 const findDefaultMatches = require('./lib/finddefaultmatches.js');
@@ -84,7 +85,7 @@ stationsObj = addAbove80(above80Data, stationsObj);
 // stationsObj = addComfortable(stationsObj);
 
 
-// Remove all stations with incomplete information (all stations do not record all
+// Remove ALL STATIONS WITH INCOMPLETE INFORMATION (all stations do not record all
 // types of data).
 for (let station in stationsObj) {
   if( stationsObj[station]["andSnGe1"] === "" ||
@@ -163,6 +164,11 @@ let minMaxArray = createMinMax(stationsObj);
 let inputMinMax = createInputMinMax(minMaxArray);
 
 
+// Create array of possible weather input options (calculated from input minmax). Return value is an object
+// becaause it is easier to move around that way: {"weatherOptions": [option1, option2, etc]}.
+let weatherOptions = createWeatherOptions(inputMinMax);
+
+
 // Calculate the default station matches based off of the default weather values
 // (found at minMaxArray[weatherValue][2]). This will be used to be used in the weather app.
 // Return value is an object because it's easier to move around this way: {"defaultMatches": [matches array]}.
@@ -182,19 +188,30 @@ fs.writeFile('weather.json', stationsObjJson, function(err) {
   };
 });
 
+// No longer using minmax.json in app (using inputminmax instead) but keeping around in case I do.
+//
 // Turn minMaxArray into JSON and output file.
-const minMaxArrayJson = JSON.stringify(minMaxArray);
-
-fs.writeFile('minmax.json', minMaxArrayJson, function(err) {
-  if (err) {
-    return console.error(err);
-  };
-});
+// const minMaxArrayJson = JSON.stringify(minMaxArray);
+//
+// fs.writeFile('minmax.json', minMaxArrayJson, function(err) {
+//   if (err) {
+//     return console.error(err);
+//   };
+// });
 
 // Turn inputMinMaxArray into JSON and output file.
 const inputMinMaxJson = JSON.stringify(inputMinMax);
 
 fs.writeFile('inputminmax.json', inputMinMaxJson, function(err) {
+  if (err) {
+    return console.error(err);
+  };
+});
+
+// Turn weatherOptions into JSON and output file.
+const weatherOptionsJson = JSON.stringify(weatherOptions);
+
+fs.writeFile('weatheroptions.json', weatherOptionsJson, function(err) {
   if (err) {
     return console.error(err);
   };
@@ -218,17 +235,23 @@ fs.writeFile('defaultmatches.json', defaultMatchesJson, function(err) {
   };
 });
 
-// Export
 
-// Output number of stations in modified stationsObj
 console.log(Object.keys(stationsObj).length + " stations.");
+
 console.log("Be sure to move move these 5 files over to the app:")
 console.log("1. weather.json");
-console.log("2. minmax.json");
+console.log("2. weatheroptions.json");
 console.log("3. inputminmax.json");
 console.log("4. metromap.json");
 console.log("5. defaultmatches.json");
+console.log("");
+
 console.log("WARNING: If you have added any data to stationsObj you must manually adjust");
-console.log("createminmax.js, createinputminmax, and defaultmatches.js to reflect the");
-console.log("changes! Changes will also need to be made in the app to be able to use any");
-console.log("new data.");
+console.log("createminmax.js, createinputminmax, and finddefaultmatches.js to reflect the");
+console.log("changes! Additionally, add the new data name to the section in jsoncreate.js");
+console.log("that checks for stations with incomplete information.");
+console.log("");
+
+console.log("Changes will also need to be made in the app.");
+console.log("See the section 'Notes on updating the app with new weather info'");
+console.log("in the app's datainfo.txt file for more information.");
