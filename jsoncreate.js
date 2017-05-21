@@ -106,7 +106,7 @@ for (let station in stationsObj) {
 stationsObj = addStateNames(stationsObj);
 
 
-// Deterine if a station lies within a larger metro or micropolitan area, and add
+// Determine if a station lies within a larger metro or micropolitan area, and add
 // that info if it does. Note that some stations belong to more than one area, in
 // which case all areas will be added. Also, find if a station's metro/micro area
 // also has other stations and make note of this.
