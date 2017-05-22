@@ -113,6 +113,20 @@ stationsObj = addStateNames(stationsObj);
 stationsObj = addMetroMicro(stationsObj);
 
 
+
+//
+// The various mappings I do between zips, cbsa, station locations, etc. should be pretty good
+// but occationally this is an error in the mapping either because of an error in the data
+// or because things like zipcodes are fluid and mappings are inherently imperfect. This is
+// the place to manually fix anything:
+//
+// Both DC locations below are incorrectly put in MA and VA in NOAA's allstations.txt file.
+stationsObj["USC00186350"]["state"] = "DC";
+stationsObj["USW00013743"]["state"] = "DC";
+//
+
+
+
 // Sort stationsObj alphabetically by city name (subsorted by state if a city names
 // exists in multipl states). Station IDs remain the keys, but they will now be ordered
 // based on their corresponding city name.
