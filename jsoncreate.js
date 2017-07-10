@@ -168,13 +168,14 @@ stationsObj = createSharedCity(stationsObj);
 let metroMap = buildMetroCityList(stationsObj);
 
 
-// Compute the min and max values for each weather observation being used.
+// Compute the min, max, midpoint, 1/3, and 2/3 values for each weather observation being used.
 let minMaxArray = createMinMax(stationsObj);
 
 
 // minMaxArray is for weather data. This is mapping of those numbers on to the relevant
 // input values I'm collecting. Ex: the values for "andPrGe5Ti" get tranfered to the actual
-// questions I'm asking ("andPrGe5TiLe" and "andPrGe5TiGe").
+// questions I'm asking ("andPrGe5TiLe" and "andPrGe5TiGe"). Appropriate default value (1/3, 1/2,
+// 2/3 way point) is added to weather value.
 let inputMinMax = createInputMinMax(minMaxArray);
 
 
@@ -184,10 +185,10 @@ let weatherOptions = createWeatherOptions(inputMinMax);
 
 
 // Calculate the default station matches based off of the default weather values
-// (found at minMaxArray[weatherValue][2]). This will be used to be used in the weather app.
+// (found at inputMinMax[weatherValue][2]). This will be used to be used in the weather app.
 // Return value is an object because it's easier to move around this way: {"defaultMatches": [matches array]}.
 // BE SURE TO MANUALLY UPDATE WHEN NEW WEATHER VALUES ARE ADDED
-let defaultMatches = findDefaultMatches(stationsObj, minMaxArray);
+let defaultMatches = findDefaultMatches(stationsObj, inputMinMax);
 
 
 
