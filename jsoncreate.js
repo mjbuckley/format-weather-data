@@ -24,6 +24,7 @@ const fs = require('fs');
 const inchPlusSnow = require('./lib/inchplussnow.js');
 const inchPlusSnowGnd = require('./lib/inchplussnowgnd.js');
 const rainGdHalfIn = require('./lib/raingdhalfin.js');
+const removeOddLocations = require('./lib/removeoddlocations.js');
 const sortByCity = require('./lib/sortbycity.js');
 
 
@@ -106,6 +107,10 @@ for (let station in stationsObj) {
 stationsObj = addStateNames(stationsObj);
 
 
+// Remove stations not in the 50 states or DC.
+stationsObj = removeOddLocations(stationsObj);
+
+
 // Determine if a station lies within a larger metro or micropolitan area, and add
 // that info if it does. Note that some stations belong to more than one area, in
 // which case all areas will be added. Also, find if a station's metro/micro area
@@ -162,10 +167,17 @@ stationsObj = createSharedCity(stationsObj);
 //
 // console.log(nameCheck(stationsObj));
 
-
+// CONSIDER NOT INCLUDING SINGULAR METRO AREAS, BUT MAKE SURE OK IN APP
 // Build object that lists cities and stations in each metro area (see function for
 // more info).
 let metroMap = buildMetroCityList(stationsObj);
+
+
+// Remove area key from each station. I'm not using this in the app right now, so this makes
+// weather.json smaller. Can easily remove this section if I decide to use area.
+for (let station in stationsObj) {
+  delete stationsObj[station]["area"];
+}
 
 
 // Compute the min, max, midpoint, 1/3, and 2/3 values for each weather observation being used.
