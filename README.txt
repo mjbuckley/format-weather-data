@@ -3,7 +3,7 @@ STATIONS OBJECT: Object with station IDs as the properties and their info as the
 stationsObj = { station1: {info}, station2: {info}, etc. }
 
 
-EXAMPLE STATION (data not real):
+EXAMPLE STATION (note that "area" is currently removed before build to minimize size but can easily be added back in):
 
 "VQW00011624": {
     "zip": "00840",
