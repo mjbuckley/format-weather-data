@@ -10,7 +10,7 @@ EXAMPLE STATION (data not real):
     "city": "Frederiksted",
     "multiCity": [], // if the city has multiple stations then all stations in that city listed here
     "area": [cbsa1, cbsa2], // Metro/micro area. Usually only one, but can be more than one. Form is "metro name, state(s) name," to distinguish different metro areas with same name (ex. Columbus)
-    "sharedarea": [cbsa1], // Metro/micro area that is shared with at least one other station
+    "sharedarea": [cbsa1], // Metro/micro area that station is a part of that also contain at least one other station in another city
     "state": "OH",
     "andSnGe1": "0.0",
     "andSnCGe1": "0.0",

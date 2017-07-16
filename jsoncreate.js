@@ -133,7 +133,7 @@ stationsObj["USW00013743"]["state"] = "DC";
 
 
 // Sort stationsObj alphabetically by city name (subsorted by state if a city names
-// exists in multipl states). Station IDs remain the keys, but they will now be ordered
+// exists in multiple states). Station IDs remain the keys, but they will now be ordered
 // based on their corresponding city name.
 stationsObj = sortByCity(stationsObj);
 
@@ -167,7 +167,7 @@ stationsObj = createSharedCity(stationsObj);
 //
 // console.log(nameCheck(stationsObj));
 
-// CONSIDER NOT INCLUDING SINGULAR METRO AREAS, BUT MAKE SURE OK IN APP
+
 // Build object that lists cities and stations in each metro area (see function for
 // more info).
 let metroMap = buildMetroCityList(stationsObj);
