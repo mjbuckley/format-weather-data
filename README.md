@@ -5,7 +5,7 @@ The code in this Github repo is responsible for creating the data files used by 
 
 ## How It Works
 
-The jsocnreate.js file is responsible for organizing the raw data and outputting it in a usable format. When run from the command line, it will process the data in the data directory and output five JSON files to be used by City Weather Match. To generate the files, run to the following command from the root of the format-weather-data directory:
+The jsocnreate.js file is responsible for organizing the raw data and outputting it in a usable format. When run from the command line, it will process the data in the data directory and output five JSON files to be used by City Weather Match. To generate the files, run the following command from the root of the format-weather-data directory:
 
 ```
 node jsoncreate.js
