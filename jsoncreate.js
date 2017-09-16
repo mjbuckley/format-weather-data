@@ -1,8 +1,6 @@
-// Run this file from the command line to create weather.json and minmax.json.
-// weather.json contains all of the station and weather info needed for use in
-// the weather app (see README for sample data and useage instructions).
-// minmax.json contains the min and max values for each weather item.
-// If the files already exist then they will be overwritten.
+// Run this file from the command line to create the JSON files to be used in City Weather Match.
+// If the files already exist then they will be overwritten. See README.md for Additional
+// informationa
 
 
 const addAbove60 = require('./lib/addabove60.js');
@@ -143,7 +141,7 @@ stationsObj = sortByCity(stationsObj);
 stationsObj = createSharedCity(stationsObj);
 
 
-// Below was something I wrote to see the number of citis with more than one station
+// Below was something I wrote to see the number of cities with more than one station
 // There's no need to print this out regularly, but I'm keeping around because
 // I could see using again sometime.
 //
@@ -186,8 +184,7 @@ let minMaxArray = createMinMax(stationsObj);
 
 // minMaxArray is for weather data. This is mapping of those numbers on to the relevant
 // input values I'm collecting. Ex: the values for "andPrGe5Ti" get tranfered to the actual
-// questions I'm asking ("andPrGe5TiLe" and "andPrGe5TiGe"). Appropriate default value (1/3, 1/2,
-// 2/3 way point) is added to weather value.
+// questions I'm asking ("andPrGe5TiLe" and "andPrGe5TiGe"). Adds min, max, and default values.
 let inputMinMax = createInputMinMax(minMaxArray);
 
 
@@ -281,4 +278,4 @@ console.log("");
 
 console.log("Changes will also need to be made in the app.");
 console.log("See the section 'Notes on updating the app with new weather info'");
-console.log("in the app's datainfo.txt file for more information.");
+console.log("in the app's datainfo.md file for more information.");
