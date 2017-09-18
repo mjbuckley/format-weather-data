@@ -1,6 +1,6 @@
 # Format Weather Data
 
-The code in this Github repo is responsible for creating the data files used by the [City Weather Match](http://www.cityweathermatch.com) website. It takes raw weather and location data and transforms it into a more useable set of JSON files. It is a companion project to the [city-weather-match](https://github.com/mjbuckley/city-weather-match) Github repo, which contains the site code for [City Weather Match](http://www.cityweathermatch.com).
+The code in this Github repo is responsible for creating the data files used by the [City Weather Match](https://www.cityweathermatch.com) website. It takes raw weather and location data and transforms it into a more useable set of JSON files. It is a companion project to the [city-weather-match](https://github.com/mjbuckley/city-weather-match) Github repo, which contains the site code for [City Weather Match](https://www.cityweathermatch.com).
 
 
 ## How It Works
