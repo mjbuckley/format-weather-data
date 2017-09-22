@@ -200,6 +200,29 @@ let weatherOptions = createWeatherOptions(inputMinMax);
 let defaultMatches = findDefaultMatches(stationsObj, inputMinMax);
 
 
+// Remove zip key from each station. I'm not using this in the app right now, so this makes
+// weather.json smaller. Can easily remove this section if I decide to use zip later.
+for (let station in stationsObj) {
+  delete stationsObj[station]["zip"];
+}
+
+
+// Change sharedarea key to sA in order to save space. Can comment this out in the future
+// if size no longer matters.
+for (let station in stationsObj) {
+  stationsObj[station]["sA"] = stationsObj[station]["sharedarea"];
+  delete stationsObj[station]["sharedarea"];
+}
+
+
+// Change multiCity key to mC in order to save space. Can comment this out in the future
+// if size no longer matters.
+for (let station in stationsObj) {
+  stationsObj[station]["mC"] = stationsObj[station]["multiCity"];
+  delete stationsObj[station]["multiCity"];
+}
+
+
 
 // OUTPUT INFORMATION:
 
