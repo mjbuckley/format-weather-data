@@ -223,6 +223,22 @@ for (let station in stationsObj) {
 }
 
 
+// Change city key to c in order to save space. Can comment this out in the future
+// if size no longer matters.
+for (let station in stationsObj) {
+  stationsObj[station]["c"] = stationsObj[station]["city"];
+  delete stationsObj[station]["city"];
+}
+
+
+// Change state key to s in order to save space. Can comment this out in the future
+// if size no longer matters.
+for (let station in stationsObj) {
+  stationsObj[station]["s"] = stationsObj[station]["state"];
+  delete stationsObj[station]["state"];
+}
+
+
 
 // OUTPUT INFORMATION:
 
