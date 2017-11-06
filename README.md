@@ -11,7 +11,7 @@ The jsocnreate.js file is responsible for organizing the raw data and outputting
 node jsoncreate.js
 ```
 
-If the files already exist, they will be overwritten with the results of the new build. A general description of the five created files is below. For a more detailed information on how these files are structured and used, see [datainfo.md](https://github.com/mjbuckley/city-weather-match/datainfo.md) on the City Weather Match Github repository.
+If the files already exist, they will be overwritten with the results of the new build. A general description of the five created files is below. For a more detailed information on how these files are structured and used, see [datainfo.md](https://github.com/mjbuckley/city-weather-match/blob/master/datainfo.md) on the City Weather Match Github repository.
 
 - **weather.json:** All weather stations and their weather and location data.
 - **metromap.json:** A mapping of metro areas to cities in each metro area, and then a mapping of those cities to the weather stations in each city (metro area -> (city1 -> (station1, station2), city2 -> (station3)), etc.).
@@ -33,4 +33,4 @@ The raw data is located in the data directory. The sources for those files are a
 
 ## Adding New Data
 
-If you want to add new raw data to be processed, there are several steps that need to be followed. First, add the new data in jsoncreate.js. Then you must manually adjust createminmax.js, createinputminmax, and finddefaultmatches.js to reflect the changes. Next, add the name of the new data to the section in jsoncreate.js that checks for stations with incomplete information. Finally, assuming that the changes are being made to use with City Weather Match, changes will also need to be made to the code there. See the notes on adding new data in [datainfo.md](https://github.com/mjbuckley/city-weather-match/datainfo.md) on the City Weather Match Github repository for more info.
+If you want to add new raw data to be processed, there are several steps that need to be followed. First, add the new data in jsoncreate.js. Then you must manually adjust createminmax.js, createinputminmax, and finddefaultmatches.js to reflect the changes. Next, add the name of the new data to the section in jsoncreate.js that checks for stations with incomplete information. Finally, assuming that the changes are being made to use with City Weather Match, changes will also need to be made to the code there. See the notes on adding new data in [datainfo.md](https://github.com/mjbuckley/city-weather-match/blob/master/datainfo.md) on the City Weather Match Github repository for more info.
